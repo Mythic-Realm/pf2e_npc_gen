@@ -1,12 +1,3 @@
-function extractDamageValue(damageString) {
-  const match = damageString.match(/\((\d+)\)/);
-  if (match) {
-    return parseInt(match[1], 10);
-  } else {
-    return 0;
-  }
-}
-
 //------------------------------------------------------------------------//
 //                                                                        //
 //    Spell List, Spell Slot, and Spell School Assignments for NPCS       //
@@ -387,7 +378,7 @@ function generateNPC(
               ? "moddamage"
               : "lowdamage";
           const damageString = weapondamage[dmgKey][level - 1];
-          const strikeHit = extractDamageValue(damageString);
+          const strikeHit = [10 + bonus + level];
           const bonus =
             weaponData["Type"] === "Ranged"
               ? parseInt(atbmods["highatb"][level - 1], 10)
