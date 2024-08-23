@@ -262,14 +262,36 @@ function generateNPC(
   const bulk = archetypeData.bulk || 0;
   const availableBulk = bulk - armorBulk;
 
-  const atbmodMapping = {
-    atbmod1: "highatb",
-    atbmod2: "modatb",
-    atbmod3: "modatb",
-    atbmod4: "lowatb",
-    atbmod5: "lowatb",
-    atbmod6: "lowatb",
-  };
+  let atbmodMapping;
+
+  if (normalizedDifficulty === "high") {
+    atbmodMapping = {
+      atbmod1: "highatb",
+      atbmod2: "highatb",
+      atbmod3: "modatb",
+      atbmod4: "lowatb",
+      atbmod5: "lowatb",
+      atbmod6: "lowatb",
+    };
+  } else if (normalizedDifficulty === "mod") {
+    atbmodMapping = {
+      atbmod1: "highatb",
+      atbmod2: "modatb",
+      atbmod3: "modatb",
+      atbmod4: "lowatb",
+      atbmod5: "lowatb",
+      atbmod6: "lowatb",
+    };
+  } else if (normalizedDifficulty === "low") {
+    atbmodMapping = {
+      atbmod1: "modatb",
+      atbmod2: "lowatb",
+      atbmod3: "lowatb",
+      atbmod4: "lowatb",
+      atbmod5: "lowatb",
+      atbmod6: "lowatb",
+    };
+  }
 
   const attributeOrder = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
   const attributeValues = {};
@@ -290,22 +312,43 @@ function generateNPC(
     lowsave: "lowsave",
   };
 
-  const saveValues = {
-    Fort: savingthrows[saveMapping[archetypeData.fortsave]][level - 1],
-    Ref: savingthrows[saveMapping[archetypeData.refsave]][level - 1],
-    Will: savingthrows[saveMapping[archetypeData.willsave]][level - 1],
-  };
+  const saveValues = {};
+
+  if (normalizedDifficulty === "low") {
+    saveValues.Fort =
+      savingthrows[saveMapping[archetypeData.fortsave]][Math.max(level - 3, 0)];
+    saveValues.Ref =
+      savingthrows[saveMapping[archetypeData.refsave]][Math.max(level - 3, 0)];
+    saveValues.Will =
+      savingthrows[saveMapping[archetypeData.willsave]][Math.max(level - 3, 0)];
+  } else if (normalizedDifficulty === "mod") {
+    saveValues.Fort =
+      savingthrows[saveMapping[archetypeData.fortsave]][Math.max(level - 2, 0)];
+    saveValues.Ref =
+      savingthrows[saveMapping[archetypeData.refsave]][Math.max(level - 2, 0)];
+    saveValues.Will =
+      savingthrows[saveMapping[archetypeData.willsave]][Math.max(level - 2, 0)];
+  } else {
+    saveValues.Fort =
+      savingthrows[saveMapping[archetypeData.fortsave]][Math.max(level - 1, 0)];
+    saveValues.Ref =
+      savingthrows[saveMapping[archetypeData.refsave]][Math.max(level - 1, 0)];
+    saveValues.Will =
+      savingthrows[saveMapping[archetypeData.willsave]][Math.max(level - 1, 0)];
+  }
 
   // Format NPC data
   const capitalizedArchetype =
     archetype.charAt(0).toUpperCase() + archetype.slice(1);
-  let npcData = `# ${capitalizedArchetype}\n## **Level** ${level}\n--- \n**Perception**: +${
-    perception[percKey][level - 1]
-  } (${10 + perception[percKey][level - 1]})\n**AC**: ${
-    armorclass[acKey][level - 1]
+  const safeLevel = Math.max(level - 1, 0); // Ensure level is at least 0 for indexing
+
+  let npcData = `# ${capitalizedArchetype}\n## **Level** ${level}\n\n --- \n**Perception**: +${
+    perception[percKey][safeLevel]
+  } (${10 + perception[percKey][safeLevel]})\n**AC**: ${
+    armorclass[acKey][safeLevel]
   }; **Fort** +${saveValues.Fort}, **Ref** +${saveValues.Ref}, **Will** +${
     saveValues.Will
-  }\n**HP:** ${totalHP};\n**Speed:** ${archetypeData.speed} ft\n**STR** +${
+  }\n\n**HP:** ${totalHP};\n**Speed:** ${archetypeData.speed} ft\n\n**STR** +${
     attributeValues.STR
   }, **DEX** +${attributeValues.DEX}, **CON** +${
     attributeValues.CON
@@ -380,17 +423,17 @@ function generateNPC(
           const damageString = weapondamage[dmgKey][level - 1];
           const bonus =
             weaponData["Type"] === "Ranged"
-              ? parseInt(atbmods["highatb"][level - 1], 10)
-              : parseInt(atbmods["highatb"][level - 1], 10);
-         const strikeHit = 10 + Number(bonus) + Number(level);
+              ? parseInt(atbmods[`${normalizedDifficulty}atb`][level - 1], 10)
+              : parseInt(atbmods[`${normalizedDifficulty}atb`][level - 1], 10);
+          const strikeHit = 10 + Number(bonus) + Number(level);
 
-
-          
-          npcData += `**${weaponData["Weapons"]}** \`[one-action]\` +${
-            strikeHit 
-          } [+${strikeHit - 5}/+${strikeHit - 10}] (${
-            weaponData["Traits"]
-          }), ${weaponData["Range"]} ${damageString} ${weaponData["Type"]}\n\n`;
+          npcData += `**${
+            weaponData["Weapons"]
+          }** \`[one-action]\` +${strikeHit} [+${strikeHit - 5}/+${
+            strikeHit - 10
+          }] (${weaponData["Traits"]}), ${
+            weaponData["Range"]
+          } ${damageString} ${weaponData["Type"]}\n\n`;
 
           bulkUsed += weaponBulk;
           weaponsSelected++;
@@ -462,7 +505,7 @@ function generateNPC(
       .sort((a, b) => parseInt(a) - parseInt(b))
       .forEach((rank) => {
         const rankSpells = spellsByRank[rank].join(", ");
-        npcData += `**R${rank}:** ${rankSpells}\n\n`;
+        npcData += `**R${rank}:** *${rankSpells}*\n\n`;
       });
   }
 
