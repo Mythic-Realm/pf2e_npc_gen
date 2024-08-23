@@ -382,7 +382,9 @@ function generateNPC(
             weaponData["Type"] === "Ranged"
               ? parseInt(atbmods["highatb"][level - 1], 10)
               : parseInt(atbmods["highatb"][level - 1], 10);
-          const strikeHit = [10 + bonus + level];
+         const strikeHit = 10 + Number(bonus) + Number(level);
+
+
           
           npcData += `**${weaponData["Weapons"]}** \`[one-action]\` +${
             strikeHit 
