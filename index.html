@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NPC Generator</title>
@@ -145,7 +144,6 @@
         margin-top: 20px; /* Optional: Add some spacing from the Generate/Copy buttons */
       }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -221,24 +219,17 @@
       </div>
     </div>
 
+    <!-- Load scripts after the DOM elements -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="npc_generator.js"></script>
 
     <script>
-      // Handle difficulty button toggling
-      const difficultyButtons = document.querySelectorAll(
-        ".difficulty-buttons button"
-      );
-      difficultyButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          difficultyButtons.forEach((btn) => btn.classList.remove("selected"));
-          button.classList.add("selected");
-        });
-      });
+      let npcData = ""; // Declare npcData as a global variable
 
       // NPC Generation logic
       document
         .getElementById("generate-button")
-        .addEventListener("click", async () => {
+        .addEventListener("click", () => {
           const level = document.getElementById("level-input").value;
           const archetype = document.getElementById("archetype-input").value;
           const isSpellcaster = document.getElementById(
@@ -252,7 +243,7 @@
             .id.replace("-button", "");
 
           // Call the NPC generation function
-          const npcData = generateNPC(
+          npcData = generateNPC(
             level,
             archetype,
             difficulty,
@@ -262,14 +253,22 @@
           );
 
           // Convert Markdown to HTML and display it
-          document.getElementById("npc-display").innerHTML = marked(npcData);
+          const npcDisplay = document.getElementById("npc-display");
+          npcDisplay.innerHTML = marked.parse(npcData);
+
+          // Store the raw Markdown content in a data attribute for copying later
+          npcDisplay.dataset.rawMarkdown = npcData;
         });
 
       // Copy to Clipboard logic
       document.getElementById("copy-button").addEventListener("click", () => {
-        const markdownContent =
-          document.getElementById("npc-display").innerHTML;
-        navigator.clipboard.writeText(markdownContent);
+        // Retrieve the original Markdown content from the dataset
+        const markdownData =
+          document.getElementById("npc-display").dataset.rawMarkdown;
+
+        // Copy the Markdown content to the clipboard
+        navigator.clipboard.writeText(markdownData).catch((err) => {
+          console.error("Failed to copy text: ", err);
         });
       });
     </script>
