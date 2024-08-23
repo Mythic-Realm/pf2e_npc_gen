@@ -394,8 +394,8 @@ function generateNPC(
               : parseInt(atbmods["highatb"][level - 1], 10);
 
           npcData += `**${weaponData["Weapons"]}** \`[one-action]\` +${
-            strikeHit + bonus
-          } [+${strikeHit + bonus - 5}/+${strikeHit + bonus - 10}] (${
+            strikeHit 
+          } [+${strikeHit - 5}/+${strikeHit - 10}] (${
             weaponData["Traits"]
           }), ${weaponData["Range"]} ${damageString} ${weaponData["Type"]}\n\n`;
 
