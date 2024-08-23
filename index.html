@@ -269,8 +269,7 @@
       document.getElementById("copy-button").addEventListener("click", () => {
         const markdownContent =
           document.getElementById("npc-display").innerHTML;
-        navigator.clipboard.writeText(markdownContent).then(() => {
-          alert("NPC data copied to clipboard!");
+        navigator.clipboard.writeText(markdownContent);
         });
       });
     </script>
