@@ -224,18 +224,6 @@
     <script src="npc_generator.js"></script>
 
 <script>
-  // Difficulty button logic
-  const difficultyButtons = document.querySelectorAll('.difficulty-buttons button');
-
-  difficultyButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Remove the 'selected' class from all buttons
-      difficultyButtons.forEach(btn => btn.classList.remove('selected'));
-
-      // Add the 'selected' class to the clicked button
-      button.classList.add('selected');
-    });
-  });
 
   let npcData = ""; // Declare npcData as a global variable
 
