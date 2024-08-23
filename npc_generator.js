@@ -378,12 +378,12 @@ function generateNPC(
               ? "moddamage"
               : "lowdamage";
           const damageString = weapondamage[dmgKey][level - 1];
-          const strikeHit = [10 + bonus + level];
           const bonus =
             weaponData["Type"] === "Ranged"
               ? parseInt(atbmods["highatb"][level - 1], 10)
               : parseInt(atbmods["highatb"][level - 1], 10);
-
+          const strikeHit = [10 + bonus + level];
+          
           npcData += `**${weaponData["Weapons"]}** \`[one-action]\` +${
             strikeHit 
           } [+${strikeHit - 5}/+${strikeHit - 10}] (${
