@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NPC Generator</title>
+    <style>
+      /* Base styles */
+      body {
+        background-color: #3b2d2d;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #2b2b2b;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px #000;
+      }
+
+      .stat-disposition label,
+      .npc-parameters label {
+        font-weight: bold;
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .difficulty-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .difficulty-buttons button {
+        background-color: #5a5252;
+        color: #ffffff;
+        border-radius: 15px;
+        padding: 10px 20px;
+        font-weight: bold;
+        border: none;
+        margin: 0 5px;
+        cursor: pointer;
+        box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+        width: 100px;
+        height: 50px;
+      }
+
+      .difficulty-buttons button.selected {
+        background-color: #ff4949;
+        color: #ffffff;
+        box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2),
+          inset 0px -3px 0px rgba(0, 0, 0, 0.1);
+      }
+
+      .difficulty-buttons button:hover {
+        background-color: #6a6363;
+      }
+
+      /* Aligning the dropdowns */
+      .npc-parameters {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .npc-parameters label {
+        margin-right: 10px;
+      }
+
+      .npc-parameters select,
+      .npc-parameters input {
+        background-color: #2b2b2b;
+        color: #ffffff;
+        border-radius: 5px;
+        padding: 5px;
+        border: 2px solid #5a5252;
+        width: 150px;
+      }
+
+      .npc-parameters select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='white' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 12px 8px;
+      }
+
+      /* Centering and spacing buttons */
+      .buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .buttons button {
+        background-color: #5a5252;
+        color: #ffffff;
+        border-radius: 15px;
+        padding: 10px 20px;
+        font-weight: bold;
+        border: 2px solid #5a5252;
+        margin: 0 10px;
+        cursor: pointer;
+        width: 45%; /* Adjust the width to control spacing */
+      }
+
+      .buttons button:active {
+        background-color: #ff4949;
+      }
+
+      /* Expanded markdown display */
+      .npc-display {
+        background-color: #2b2b2b;
+        color: #ffffff;
+        border: none;
+        border-radius: 0px;
+        padding: 10px;
+        width: 100%;
+        height: auto; /* Allow the height to adjust automatically */
+        resize: none;
+        overflow-y: visible; /* Adjust to make sure the content isn't clipped */
+      }
+
+      .markdown-body {
+        font-family: Arial, sans-serif;
+        color: #ffffff;
+        background-color: #2b2b2b;
+        padding: 10px;
+        border-radius: 0px;
+        border: none;
+        max-height: none; /* Allow the height to expand fully */
+        overflow-y: visible; /* Adjust to make sure the content isn't clipped */
+        margin-top: 20px; /* Optional: Add some spacing from the Generate/Copy buttons */
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="stat-disposition">
+        <label>Stat Disposition Levels</label>
+        <div class="difficulty-buttons">
+          <button id="low-button">Low</button>
+          <button id="moderate-button" class="selected">Moderate</button>
+          <button id="high-button">High</button>
+        </div>
+      </div>
+
+      <div class="npc-parameters">
+        <label for="level-input">Level:</label>
+        <select id="level-input">
+          <!-- Options for levels 1 to 24 -->
+          <script>
+            for (let i = 1; i <= 24; i++) {
+              document.write('<option value="' + i + '">' + i + "</option>");
+            }
+          </script>
+        </select>
+
+        <label for="archetype-input">Archetype:</label>
+        <select id="archetype-input">
+          <option value="Archer">Archer</option>
+          <option value="Bard">Bard</option>
+          <option value="Berserker">Berserker</option>
+          <option value="Cleric">Cleric</option>
+          <option value="Occultist">Occultist</option>
+          <option value="Paladin">Paladin</option>
+          <option value="Pugilist">Pugilist</option>
+          <option value="Shaman">Shaman</option>
+          <option value="Soldier">Soldier</option>
+          <option value="Sorcerer">Sorcerer</option>
+          <option value="Thief">Thief</option>
+          <option value="Wanderer">Wanderer</option>
+          <option value="Wizard">Wizard</option>
+        </select>
+      </div>
+
+      <div class="checkboxes">
+        <div>
+          <label for="spellcaster-checkbox">
+            <input type="checkbox" id="spellcaster-checkbox" />
+            <span class="switch"></span>
+            Allow the NPC to cast Spells
+          </label>
+        </div>
+        <div>
+          <label for="universal-checkbox">
+            <input type="checkbox" id="universal-checkbox" />
+            <span class="switch"></span>
+            Include Universal Talents
+          </label>
+        </div>
+        <div>
+          <label for="rare-checkbox">
+            <input type="checkbox" id="rare-checkbox" />
+            <span class="switch"></span>
+            Include Rare Talents
+          </label>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button id="generate-button">Generate</button>
+        <button id="copy-button">Copy to Clipboard</button>
+      </div>
+
+      <div class="npc-display">
+        <div id="npc-display" class="markdown-body"></div>
+      </div>
+    </div>
+
+    <script src="npc_generator.js"></script>
+
+    <script>
+      // Handle difficulty button toggling
+      const difficultyButtons = document.querySelectorAll(
+        ".difficulty-buttons button"
+      );
+      difficultyButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          difficultyButtons.forEach((btn) => btn.classList.remove("selected"));
+          button.classList.add("selected");
+        });
+      });
+
+      // NPC Generation logic
+      document
+        .getElementById("generate-button")
+        .addEventListener("click", async () => {
+          const level = document.getElementById("level-input").value;
+          const archetype = document.getElementById("archetype-input").value;
+          const isSpellcaster = document.getElementById(
+            "spellcaster-checkbox"
+          ).checked;
+          const includeUniversal =
+            document.getElementById("universal-checkbox").checked;
+          const includeRare = document.getElementById("rare-checkbox").checked;
+          const difficulty = document
+            .querySelector(".difficulty-buttons .selected")
+            .id.replace("-button", "");
+
+          // Call the NPC generation function
+          const npcData = generateNPC(
+            level,
+            archetype,
+            difficulty,
+            isSpellcaster,
+            includeUniversal,
+            includeRare
+          );
+
+          // Convert Markdown to HTML and display it
+          document.getElementById("npc-display").innerHTML = marked(npcData);
+        });
+
+      // Copy to Clipboard logic
+      document.getElementById("copy-button").addEventListener("click", () => {
+        const markdownContent =
+          document.getElementById("npc-display").innerHTML;
+        navigator.clipboard.writeText(markdownContent).then(() => {
+          alert("NPC data copied to clipboard!");
+        });
+      });
+    </script>
+  </body>
+</html>
