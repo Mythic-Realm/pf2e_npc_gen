@@ -595,7 +595,7 @@ async function initializeGenerator() {
     window.cleric_atfoptions = npcData.cleric_atfoptions;
     window.occultist_atfoptions = npcData.occultist_atfoptions;
     window.paladin_atfoptions = npcData.paladin_atfoptions;
-    window.pugilist_atfoptions = npcData.pugilist_atfoptions;
+    window.pugalist_atfoptions = npcData.pugalist_atfoptions;
     window.shaman_atfoptions = npcData.shaman_atfoptions;
     window.soldier_atfoptions = npcData.soldier_atfoptions;
     window.sorcerer_atfoptions = npcData.sorcerer_atfoptions;
